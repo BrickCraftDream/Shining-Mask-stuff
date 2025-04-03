@@ -1,4 +1,4 @@
-# Documentation for the Bluetooth Low Energy (Ble) protocol for pretty much any LED Mask controlled by the Shining RGB App
+# Documentation for the Bluetooth Low Energy (Ble) protocol for pretty much any LED Mask controlled by the Shining Mask App
 
 ### Characteristics:
 - Command Characteristic: `D44BC439-ABFD-45A2-B575-925416129600` (Write)
