@@ -8,7 +8,7 @@
 - Audio Visualization Characteristic: `D44BC439-ABFD-45A2-B575-92541612960B` (Write)
 
 ### Data is encrypted using AES-128 in ECB mode with a fixed key:
-###### Note that all the data sent to the command characteristic needs to be 16 bytes long
+###### Note that all the data sent to the command characteristic needs to be 16 bytes long (encrypted data), same as all the to-be-encrypted data.
 `32672f7974ad43451d9c6c894a0e8764`
 
 ### Command Structure for the commands that are sent to the command handle:
@@ -21,7 +21,7 @@
 ## Commands:
 ### Utility:
 - ### `LIGHT`:
-  - Description: Sets the brightness, lower brightness means less color accuracy in color depended modes, such as images, and higher brightness over `128` means more flickering due to the LEDs not being able to get that bright at the same flickering frequency. I personally keep it at a max of `100`
+  - Description: Sets the brightness, lower brightness means less color accuracy in color dependend modes, such as images, and higher brightness over `128` means more flickering due to the LEDs not being able to get that bright at the same frequency, probably due to battery limitations. I personally keep it at a max of `100`
   - Hex of the ASCII name: `4c49474854`
   - arguments:
     - 1 byte for the brightness
@@ -126,7 +126,7 @@
   - arguments:
     - 2 bytes for the image size of the following image
     - 2 bytes for the image index
-    - 1 byte for the image toggle (wether to tell that an image is going to be uploaded or a bitmap. Has to be correctlt set for the desired mode, otherwise the upload fails)
+    - 1 byte for the image toggle (wether to tell that an image is going to be uploaded or a bitmap. Has to be correctly set for the desired mode, otherwise the upload fails)
 
 - ### `DATCP`:
   - Description: seems to confirm the image upload, sending the current unix timecode with it
