@@ -8,6 +8,7 @@
 - Audio Visualization Characteristic: `D44BC439-ABFD-45A2-B575-92541612960B` (Write)
 
 ### Data is encrypted using AES-128 in ECB mode with a fixed key:
+###### Note that all the data sent to the command characteristic needs to be 16 bytes long
 `32672f7974ad43451d9c6c894a0e8764`
 
 ### Command Structure for the commands that are sent to the command handle:
