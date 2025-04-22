@@ -1,4 +1,5 @@
-# Documentation for the Bluetooth Low Energy (Ble) protocol for pretty much any LED Mask controlled by the Shining Mask App
+# Bluetooth Low Energy protocol documentation
+### For every LED Mask that gets controlled by the App called 'Shining Mask'. [Google Play](https://play.google.com/store/apps/details?id=cn.com.heaton.shiningmask), [App Store](https://apps.apple.com/de/app/shining-mask/id1528108780)
 
 ### Characteristics:
 - Command Characteristic: `D44BC439-ABFD-45A2-B575-925416129600` (Write)
@@ -21,29 +22,36 @@
 - ### `LIGHT`:
   - Description: Sets the brightness, lower brightness means less color accuracy in color depended modes, such as images, and higher brightness over `128` means more flickering due to the LEDs not being able to get that bright at the same flickering frequency. I personally keep it at a max of `100`
   - Hex of the ASCII name: `4c49474854`
-  - arguments: 1 byte represents the brightness (0-255)
+  - arguments:
+    - 1 byte for the brightness
 - ### `IMAG`:
   - Description: Displays the builtin image at the provided id. Everything above `0x69` will display out of bounds data, mostly partial frames of the builtin animations.
   - Hex of the ASCII name: `494d4147`
-  - arguments: 1 byte, represents the builtin image id to be displayed (0-255)
+  - arguments:
+    - 1 byte for the builtin image id to be displayed
 - ### `ANIM`:
   - Description: Plays the builtin animation at the provided id. Everything above `0x45` will display out of bounds data, mostly some random pixels. Strangely it still plays that data as an animation
   - Hex of the ASCII name: `414e494d`
-  - arguments: 1 byte, represents the builtin animation id to be displayed (0-255)
+  - arguments:
+    - 1 byte for the built-in animation id to be displayed
 - ### `DELE`:
   - Description: Deletes the given DIY images from the mask
   - Hex of the ASCII name: `44454c45`
-  - arguments: 1 byte gives the count of to be deleted DIY images and the rest give the DIY image ids of the images that should get deleted
+  - arguments:
+    - 1 byte for the count of the to be deleted DIY images
+    - max 10 bytes for the DIY image ids of the images that should get deleted
  
 - ### `PLAY`:
   - Description: Plays the given DIY images in order
   - Hex of the ASCII name: `504C4159`
-  - arguments: same as [`DELE`](#dele), but instead of deleting them, it just plays them in order
+  - arguments:
+    - 1 byte for the count of the to be played DIY images
+    - max 10 bytes for the DIY image ids of the images that should get played (in order)
 
 - ### `CHEC`:
   - Description: Command for checking how many DIY images are on the mask
   - Hex of the ASCII name: `43484543`
-  - arguments: triggers a response on the notify Characteristic, sending back the number of DIY images uploaded in one byte
+  - arguments: none, triggers a response on the notify Characteristic, sending back the number of DIY images uploaded in one byte
 
 -----------------------------------------------------------------
 
@@ -51,44 +59,54 @@
 - ### `MODE`:
   - Description: Allows to change the animation used to display the current text
   - Hex of the ASCII name: `4d4f4445`
-  - arguments: 1 byte, sets the text display mode:
-    - 0: n/a (all n/a are just reverting to off)
-    - 1: off
-    - 2: blink
-    - 3: scroll right to left
-    - 4: scroll left to right
+  - arguments:
+    - 1 byte for setting the text display mode:
+      - 0: n/a (all n/a are just reverting to off)
+      - 1: off
+      - 2: blink
+      - 3: scroll right to left
+      - 4: scroll left to right
+      - 5 to 255: n/a
 
 - ### `SPEED`:
   - Description: Changes the speed of the text displayment modes
   - Hex of the ASCII name: `5350454544`
-  - arguments: 1 byte, sets the speed of the [`MODE`](#mode) effect
+  - arguments:
+    - 1 byte for setting the speed of the [`MODE`](#mode) effect
 
 - ### `M`:
   - Description: Sets the special color/effect for the text
   - Hex of the ASCII name: `4d`
-  - arguments: 1 byte controls wether it's enabled, 1 byte controls the mode:
-    - 0: Random color dots on white background
-    - 1: Idk, seems like a bit of rainbow on the top and bottom of the text, with red on the left transitioning to purple on the right. A big white part is in the middle
-    - 2: Fade from Yellow (top) to Blue (bottom)
-    - 3: fade from Green (sides) to blue (middle) (circle shaped)
-    - 4: enables the first background image
-    - 5: enables the second background image
-    - 6: enables the third background image
-    - 7: enables the fourth background image
-    - everything else: just doesn't change it (aka it just stays at the same option)
+  - arguments:
+    - 1 byte for controlling wether it's enabled
+    - 1 byte for controlling the mode:
+      - 0: Random color dots on white background
+      - 1: Idk, seems like a bit of rainbow on the top and bottom of the text, with red on the left transitioning to purple on the right. A big white part is in the middle
+      - 2: Fade from Yellow (top) to Blue (bottom)
+      - 3: fade from Green (sides) to blue (middle) (circle shaped)
+      - 4: enables the first background image
+      - 5: enables the second background image
+      - 6: enables the third background image
+      - 7: enables the fourth background image
+      - 8 to 255: just doesn't change it from the previous effect (aka it just stays at the same one)
 
 - ### `FC`:
   - Description: Sets the text color
   - Hex of the ASCII name: `4643`
-  - arguments: 1 byte controls wether it's enabled, 3 bytes control the color in RGB format
+  - arguments:
+    - 1 byte for controlling wether it's enabled
+    - 3 bytes for controlling the color in RGB format
 
 - ### `BC`:
   - Description: Sets the background color, can be used to 'disable' the images from the [`M`](#m) command by setting it to black
   - Hex of the ASCII name: `4243`
-  - arguments: 1 byte controls wether it's enabled, 3 bytes control the color in RGB format
+  - arguments:
+    - 1 byte for controlling wether it's enabled
+    - 3 bytes for controlling the color in RGB format
 
 - ### Text uploading procedure:
-  - You will need something that can create a bitmap and, although not required (the text, or part of the text, will just be white if no data is provided for it. For example if you have a bitmap that is `31` pixels wide and color data that has data for only `26` pixels, the last five pixels will be displayed as white), something that can create a color array for this to work. 
+  - You will need something that can create a bitmap and, although not required, something that can create a color array for this to work (the text, or part of the text, will just be white if no color data is provided for it. For example if you have a bitmap that is `31` pixels wide and color data that has data for only `26` pixels, the last five pixels will be displayed as white).
+    - I haven't really figured out the correct way of creating a colormap yet.
   - The bitmap has to be `16` pixels high and could theoretically be a few thousand pixels wide, but I wouldn't recommend doing that as it can cause the mask to become unresponsive and buggy, forcing one to cut the power by removing the battery (for some models, you will have to open the mask to do so). 
     - I would limit the length of the bitmap to about `512` to be save but of course making it `1024` or `2048` could work, it just poses a risk (I also haven't really tested this so I just assumed `512` would be good). 
   - The color array can be used to give each pixel stripe of the text (so 1 x 16, width x height) a different color. 
@@ -104,7 +122,10 @@
 - ### `DATS`:
   - Description: Used to tell the mask that an image upload is about to start
   - Hex of the ASCII name: `44415453`
-  - arguments: 2 bytes, image size of the following image, 2 bytes, image index, 1 byte, image toggle (wether to tell that an image is going to be uploaded or a bitmap. Has to be correct, otherwise upload fails)
+  - arguments:
+    - 2 bytes for the image size of the following image
+    - 2 bytes for the image index
+    - 1 byte for the image toggle (wether to tell that an image is going to be uploaded or a bitmap. Has to be correctlt set for the desired mode, otherwise the upload fails)
 
 - ### `DATCP`:
   - Description: seems to confirm the image upload, sending the current unix timecode with it
@@ -119,6 +140,7 @@
     - After every successfull packet transfer, the mask respons with REOKOK for that image/packet. 
     - The last packet can have less than `98` bytes, so the data length byte is calculated for the less than `98` bytes. 
     - After that, the packet gets padded up to the full `100` bytes.
+    - Note that the packet does not need encrypting.
   - After all packets have been uploaded, the program sends the [`DATCP`](#datcp) command, to wich the mask respons with [`DATCPOK`](#datcpok).
 
 -----------------------------------------------------------------
@@ -128,7 +150,7 @@
 - #### Audio data:
   - 1 byte for the counter (it's always `0x0f`, as all 15 following bytes are utilized)
   - 1 byte for the mode (modes are listed below)
-  - 14 bytes for the visualization. Each nibble of these 14 bytes corresponds to one row of pixels, changing the value of a nibble also changes the size of the pixel row. `0x0` means that that row is off and `0xf` means that that row is 100% full or on.
+  - 14 bytes for the visualization. Each nibble (one of the two characters of a byte) of these 14 bytes corresponds to one row of pixels, changing the value of a nibble also changes the size of the pixel row. `0x0` means that that row is off and `0xf` means that that row is 100% full or on.
 
 - #### Modes:
   - 0: vertical bars, color fade from red (middle) over green and blue to purple (left and right sides). The following nibbles are off all the time (starting from nibble 0): 2, 5, 8, 11, 14, 17, 20 (problably also 23 and 26, but those are outside of the screen so they are cut off and never visible in this mode)
@@ -139,21 +161,28 @@
 
 -----------------------------------------------------------------
 ### Responses:
-#### All responses are sent on the notification handle and their last byte is always plus `0x01`
+#### All responses are sent on the notification handle and their last byte is always plus `0x01` regardless of any previous calculation
 - ### `REOKOK`:
   - Description: Confirms that the mask has recieved and processed the image packet
   - Hex of the ASCII name: `52454F4B4F4B`
-  - arguments: 2 bytes for the ID of the currently uploading image, 1 byte telling if it's a bitmap or an image (`0x00` if bitmap and 0x01 if image), padding up to 15 bytes, 1 byte for the current packet index with an offset of 1 (it starts to count at `0x01` instead of `0x00`) plus the above mentioned `0x01` (so for packet index `0x50` it would return `0x52`) (I will not mention the addition of that extra byte again, as it's already said above and here)
+  - arguments:
+    - 2 bytes for the ID of the currently uploading image
+    - 1 byte for telling if it's a bitmap or an image (`0x00` if bitmap and 0x01 if image)
+    - padding up to 15 bytes
+    - 1 byte for the current packet index with an offset of 1 (it starts to count at `0x01` instead of `0x00`) plus the above mentioned `0x01` (so for packet index `0x50` it would return `0x52`)
 
 - ### `DATCPOK`
   - Description: Confirms the recieving of the unix timecode
   - Hex of the ASCII name: `44415443504F4B`
-  - arguments: 2 bytes for the two most significant bytes of the unix timecode sent by the [`DATCP`](#datcp) command
+  - arguments:
+    - 2 bytes for the two most significant bytes of the unix timecode sent by the [`DATCP`](#datcp) command
 
 - ### `DATOK`
   - Description: Confirms the start of the image upload for the specific image id
   - Hex of the ASCII name: `444154534f4b`
-  - arguments: 2 bytes for the image id, 1 byte to tell wether it's an image or a bitmap
+  - arguments:
+    - 2 bytes for the image id
+    - 1 byte to tell wether it's an image or a bitmap
 
 - ### `PLAYOK`
   - Description: Confirms that the [`PLAY`](#play) command was executed on the mask
@@ -163,12 +192,13 @@
 - ### `DELEOK`
   - Description: Confirms the deletion of images
   - Hex of the ASCII name: `44454c454f4b`
-  - arguments: seems to be 32 bytes, I have no idea what those mean. Two [`DELEOK`](#deleok)s are sent for one [`DELE`](#dele) command though
+  - arguments: seems to be 32 bytes (and sometimes 16 bytes), I have no idea what those mean. Two [`DELEOK`](#deleok)s are sent for one [`DELE`](#dele) command though (at least that's what I got from the data I have available)
 
 - ### `CHEC`
   - Description: Returns the number of DIY images
   - Hex of the ASCII name: `43484543`
-  - arguments: 1 byte for the number of DIY images
+  - arguments:
+    - 1 byte for the number of DIY images
 
 
 -----------------------------------------------------------------
